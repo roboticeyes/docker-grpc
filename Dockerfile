@@ -12,7 +12,6 @@ ARG BASE_IMAGE="${BASE_IMAGE_NAME}:${BASE_IMAGE_VERSION}"
 FROM ${BASE_IMAGE}
 
 ARG GRPC_VERSION="v1.35.0"
-ARG BUILD_CORES=4
 
 RUN \
   apt-get update && \
@@ -20,7 +19,7 @@ RUN \
     build-essential \
     cmake \
     wget \
-    git && \
+    git \
     vim && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
@@ -37,7 +36,7 @@ RUN \
       -DgRPC_BUILD_TESTS=OFF \
       -DCMAKE_INSTALL_PREFIX=/usr \
       .. && \
-  make -j${BUILD_CORES} && \
+  make -j$(nproc) && \
   make install && \
   cd ../.. && \
   rm -rf grpc
