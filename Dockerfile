@@ -5,47 +5,30 @@
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-ARG TIMEZONE="Europe/Vienna"
-ARG _BASE_IMAGE_NAME="debian"
-ARG _BASE_IMAGE_VERSION="10.7-slim"
+ARG BASE_IMAGE_NAME="debian"
+ARG BASE_IMAGE_VERSION="10.7-slim"
+ARG BASE_IMAGE="${BASE_IMAGE_NAME}:${BASE_IMAGE_VERSION}"
 
-# Number of processors used for compilation
-ARG NPROC=4
+FROM ${BASE_IMAGE}
 
-ARG _BASE_IMAGE="${_BASE_IMAGE_NAME}:${_BASE_IMAGE_VERSION}"
-
-###############################################################################
-# TIMEZONE
-###############################################################################
-FROM ${_BASE_IMAGE} as timezone
-
-RUN \
-  apt-get update && \
-  apt-get -y install tzdata && \
-  rm -rf /var/lib/apt/lists/*
-
-###############################################################################
-# ROOT
-###############################################################################
-FROM ${_BASE_IMAGE} as root
-ARG NPROC
+ARG GRPC_VERSION="v1.35.0"
+ARG BUILD_CORES=4
 
 RUN \
   apt-get update && \
   apt-get -y install \
-    build-essential cmake \
-    bash \
-    tini \
+    build-essential \
+    cmake \
     wget \
-    git \
+    git && \
     vim && \
+  apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
 WORKDIR "/tmp/build"
 
-# Build gRPC
 RUN \
-  git clone --recurse-submodules -b v1.35.0 https://github.com/grpc/grpc && \
+  git clone --recurse-submodules -b ${GRPC_VERSION} https://github.com/grpc/grpc && \
   cd grpc && \
   mkdir -p build && \
   cd build && \
@@ -54,7 +37,7 @@ RUN \
       -DgRPC_BUILD_TESTS=OFF \
       -DCMAKE_INSTALL_PREFIX=/usr \
       .. && \
-  make -j${NPROC} && \
+  make -j${BUILD_CORES} && \
   make install && \
   cd ../.. && \
   rm -rf grpc
