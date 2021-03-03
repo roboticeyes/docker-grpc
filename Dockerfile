@@ -40,3 +40,10 @@ RUN \
   make install && \
   cd ../.. && \
   rm -rf grpc
+
+# Download and install buf (https://buf.build/)
+ARG BUF_VERSION="v0.38.0"
+ARG BUF_URL="https://github.com/bufbuild/buf/releases/download/${BUF_VERSION}/buf-Linux-x86_64"
+
+RUN \
+  wget -O /usr/bin/buf -r ${BUF_URL} && chmod +x /usr/bin/buf
