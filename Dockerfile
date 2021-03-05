@@ -61,9 +61,10 @@ RUN \
   tar -C /usr -xvzf go.tar.gz && \
   rm go.tar.gz && \
   ln -s /usr/go/bin/go /usr/bin/go && \
+  export GOPATH=/opt && \
   export GO111MODULE=on && \
   go get google.golang.org/protobuf/cmd/protoc-gen-go google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 RUN \
-  ln -s $(go env GOPATH)/bin/protoc-gen-go /usr/bin/protoc-gen-go && \
-  ln -s $(go env GOPATH)/bin/protoc-gen-go-grpc /usr/bin/protoc-gen-go-grpc
+  ln -s /opt/bin/protoc-gen-go /usr/bin/protoc-gen-go && \
+  ln -s /opt/bin/protoc-gen-go-grpc /usr/bin/protoc-gen-go-grpc
