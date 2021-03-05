@@ -53,11 +53,17 @@ ARG BUF_URL="https://github.com/bufbuild/buf/releases/download/${BUF_VERSION}/bu
 RUN \
   wget -O /usr/bin/buf -r ${BUF_URL} && chmod +x /usr/bin/buf
 
-# Install Go
+# Install Go and GO gRPC
 ARG GO_VERSION="1.16"
 ARG GO_URL="https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz"
 RUN \
   wget -O go.tar.gz -r ${GO_URL} && \
   tar -C /usr -xvzf go.tar.gz && \
   rm go.tar.gz && \
-  ln -s /usr/go/bin/go /usr/bin/go
+  ln -s /usr/go/bin/go /usr/bin/go && \
+  export GO111MODULE=on && \
+  go get google.golang.org/protobuf/cmd/protoc-gen-go google.golang.org/grpc/cmd/protoc-gen-go-grpc
+
+RUN \
+  ln -s $(go env GOPATH)/bin/protoc-gen-go /usr/bin/protoc-gen-go && \
+  ln -s $(go env GOPATH)/bin/protoc-gen-go-grpc /usr/bin/protoc-gen-go-grpc
