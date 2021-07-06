@@ -20,9 +20,14 @@ RUN \
     cmake \
     wget \
     git \
+    nodejs npm\
     vim && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
+
+# Install typescript plugin
+RUN \
+  npm i ts-protoc-gen --global
 
 WORKDIR "/tmp/build"
 
