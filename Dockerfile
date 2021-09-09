@@ -52,7 +52,7 @@ RUN \
   ln -s /usr/bin/grpc_csharp_plugin /usr/bin/protoc-gen-csharp-grpc
 
 # Download and install buf (https://buf.build/)
-ARG BUF_VERSION="v0.38.0"
+ARG BUF_VERSION="v0.56.0"
 ARG BUF_URL="https://github.com/bufbuild/buf/releases/download/${BUF_VERSION}/buf-Linux-x86_64"
 
 RUN \
