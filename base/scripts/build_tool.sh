@@ -13,6 +13,7 @@ readonly RE_DOCKER_USERNAME
 
 readonly _BT_MICROSERVICE_NAME="pb-base"
 
+declare _BT_VCS_REF; _BT_VCS_REF=$(git rev-parse --short HEAD)
 readonly _BT_MICROSERVICE_VERSION="1.0"
 readonly _BT_DOCKER_REPOSITORY="planbeamer-01/${_BT_MICROSERVICE_NAME}"
 readonly _BT_DOCKER_TAG="${_BT_DOCKER_REPOSITORY}:${_BT_MICROSERVICE_VERSION}"
@@ -35,7 +36,7 @@ _build_production_image() {
         --build-arg NPROC=$NPROC \
         --label "org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
         --label "org.label-schema.version=${_BT_MICROSERVICE_VERSION}" \
-        --label "org.label-schema.vcs-ref=${_BT_MICROSERVICE_VERSION}" \
+        --label "org.label-schema.vcs-ref=${_BT_VCS_REF}" \
         .
 }
 
