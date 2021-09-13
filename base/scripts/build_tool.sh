@@ -13,9 +13,7 @@ readonly RE_DOCKER_USERNAME
 
 readonly _BT_MICROSERVICE_NAME="pb-base"
 
-declare _BT_VCS_REF; _BT_VCS_REF="v1.0"
-# $(git rev-parse --short HEAD)
-readonly _BT_MICROSERVICE_VERSION=${_BT_VCS_REF}
+readonly _BT_MICROSERVICE_VERSION="1.0"
 readonly _BT_DOCKER_REPOSITORY="planbeamer-01/${_BT_MICROSERVICE_NAME}"
 readonly _BT_DOCKER_TAG="${_BT_DOCKER_REPOSITORY}:${_BT_MICROSERVICE_VERSION}"
 readonly _BT_DOCKER_TAG_FULL="${_BT_DOCKER_REPOSITORY}:${_BT_MICROSERVICE_VERSION}-full"
@@ -31,25 +29,13 @@ _docker_login() {
     echo ${RE_DOCKER_PASSWORD:?} | docker login -u ${RE_DOCKER_USERNAME:?} --password-stdin ${RE_DOCKER_REGISTRY:?}
 }
 
-_ensure_docker_connection() {
-    if [[ -z ${DOCKER_HOST:-} || ! ${DOCKER_HOST:-} =~ ^tcp.* ]]
-    then
-        declare MAIN_IP; MAIN_IP=$(ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')
-        DOCKER_HOST="tcp://${MAIN_IP}:2375"
-    fi
-
-    echo "Connecting to docker daemon using DOCKER_HOST=${DOCKER_HOST} ..."
-    docker info > /dev/null || \
-        (echo "Docker daemon must be reachable using TCP." && exit 1)
-}
-
 _build_production_image() {
     _docker_login
     docker build --pull --tag "${_BT_DOCKER_TAG}" \
         --build-arg NPROC=$NPROC \
         --label "org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
         --label "org.label-schema.version=${_BT_MICROSERVICE_VERSION}" \
-        --label "org.label-schema.vcs-ref=${_BT_VCS_REF}" \
+        --label "org.label-schema.vcs-ref=${_BT_MICROSERVICE_VERSION}" \
         .
 }
 
@@ -58,7 +44,6 @@ case "${1:-}" in
         _build_production_image
         ;;
     run)
-        _ensure_docker_connection
         shift # remove first argument
 
         # run production image
