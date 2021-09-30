@@ -164,7 +164,8 @@ RUN \
 ###############################################################################
 RUN \
   apt-get update && \
-  apt-get install -y pkg-config zip g++ zlib1g-dev unzip python
+  apt-get install -y pkg-config zip g++ zlib1g-dev unzip python && \
+  rm -rf /var/lib/apt/lists/*
 
 
 #----------------------------------------------------------------------
