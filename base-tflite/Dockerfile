@@ -215,8 +215,8 @@ RUN CC=gcc bazel build -c opt \
   --config=monolithic && \
   cp bazel-bin/tensorflow/lite/libtensorflowlite.so /usr/local/lib/ && \
   mkdir /usr/local/include/tensorflow && \
-  cp -R tensorflow/lite/ /usr/local/include/tensorflow/ && \
-  cp -R bazel-bin/external/flatbuffers/src/_virtual_includes/flatbuffers/flatbuffers /usr/local/include/
+  cp -RL tensorflow/lite/ /usr/local/include/tensorflow/ && \
+  cp -RL bazel-bin/external/flatbuffers/src/_virtual_includes/flatbuffers/flatbuffers /usr/local/include/
 
 # important clear bazel cache!!!
 RUN rm -rf "/root/.cache/"
