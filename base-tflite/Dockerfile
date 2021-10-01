@@ -164,7 +164,7 @@ RUN \
 ###############################################################################
 RUN \
   apt-get update && \
-  apt-get install -y pkg-config zip g++ zlib1g-dev unzip python && \
+  apt-get install -y pkg-config zip g++ zlib1g-dev unzip && \
   rm -rf /var/lib/apt/lists/*
 
 
@@ -174,7 +174,6 @@ RUN \
 ARG BAZEL_VERSION
 
 WORKDIR "/tmp/workdir"
-
 RUN mkdir bazel-tmp
 WORKDIR "/tmp/workdir/bazel-tmp"
 RUN wget https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh
@@ -182,12 +181,13 @@ RUN chmod +x bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh
 RUN ./bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh --user 
 RUN ln -s /root/bin/bazel /usr/bin/bazel
 RUN bazel --version
-WORKDIR "/tmp/workdir"
+RUN rm -rf "/tmp/workdir/bazel-tmp"
 
 #----------------------------------------------------------------------
 # Install tensorflow
 # NOTE: Please increase your swap to avoid system freezing, else, set the BAZEL_N_JOBS=1
 #----------------------------------------------------------------------
+WORKDIR "/tmp/workdir"
 ARG TENSORFLOW_VERSION
 RUN mkdir tf-tmp
 WORKDIR "/tmp/workdir/tf-tmp"
@@ -217,3 +217,9 @@ RUN CC=gcc bazel build -c opt \
   mkdir /usr/local/include/tensorflow && \
   cp -R tensorflow/lite/ /usr/local/include/tensorflow/ && \
   cp -R bazel-bin/external/flatbuffers/src/_virtual_includes/flatbuffers/flatbuffers /usr/local/include/
+
+# important clear bazel cache!!!
+RUN rm -rf "/root/.cache/"
+
+# finalize
+RUN rm -rf "/tmp/"
