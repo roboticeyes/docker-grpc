@@ -62,7 +62,6 @@ RUN \
   git \
   libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
   libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev \
-  python3-dev python3-numpy \
   libeigen3-dev \
   libtbb2 libtbb-dev libdc1394-22-dev \
   libavcodec-extra libavformat58 libswscale5 libv4l-0 \
@@ -75,8 +74,13 @@ RUN \
   g++ \
   zlib1g-dev\
   unzip \
-  python && \
-  rm -rf /var/lib/apt/lists/*
+  python \
+  python3-dev \
+  python3-pip && \
+  rm -rf /var/lib/apt/lists/* && \
+  pip3 install numpy wheel keras_preprocessing --no-deps && \
+  ln -sf /usr/bin/python3 /usr/bin/python
+
 
 WORKDIR "/tmp/workdir"
 
