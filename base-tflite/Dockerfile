@@ -16,8 +16,8 @@
 #   opencv-v4.5.3
 #   buf-v0.56.0
 #   go-v1.17
-#   bazel=3.7.2
-#   tensorflow=2.5.0
+#   bazel=4.2.1
+#   tensorflow=2.8.0
 #
 ###############################################################################
 
@@ -29,8 +29,8 @@ ARG BUF_VERSION="0.56.0"
 ARG OPENCV_VERSION="4.5.3"
 ARG GO_VERSION="1.17"
 ARG NPROC=8
-ARG BAZEL_VERSION="3.7.2"
-ARG TENSORFLOW_VERSION="2.5.0"
+ARG BAZEL_VERSION="4.2.1"
+ARG TENSORFLOW_VERSION="2.8.0"
 ARG BAZEL_N_JOBS=6
 
 ARG _BASE_IMAGE="${_BASE_IMAGE_NAME}:${_BASE_IMAGE_VERSION}"
@@ -67,19 +67,21 @@ RUN \
   libavcodec-extra libavformat58 libswscale5 libv4l-0 \
   libxvidcore4 libjpeg62-turbo libpng16-16 libtiff5 \
   openexr libatlas-base-dev \
-  libtbb2 \
+  libtbb2 \ 
   nano \
   pkg-config \
   zip \
   g++ \
   zlib1g-dev\
   unzip \
+  build-essential \
+  libtool \ 
   python \
-  python3-dev \
+  python3-dev \ 
   python3-pip && \
   rm -rf /var/lib/apt/lists/* && \
-  pip3 install numpy wheel keras_preprocessing --no-deps && \
-  ln -sf /usr/bin/python3 /usr/bin/python
+  ln -sf /usr/bin/python3 /usr/bin/python && \
+  pip3 install numpy 
 
 
 WORKDIR "/tmp/workdir"
@@ -198,7 +200,7 @@ RUN mkdir tf-tmp
 WORKDIR "/tmp/workdir/tf-tmp"
 RUN wget https://github.com/tensorflow/tensorflow/archive/refs/tags/v${TENSORFLOW_VERSION}.zip && \
   unzip v${TENSORFLOW_VERSION}.zip && \
-  cd /tmp/workdir/tf-tmp/tensorflow-${TENSORFLOW_VERSION} && \
+  cd /tmp/workdir/tf-tmp/tensorflow-${TENSORFLOW_VERSION}/ && \  
   ./configure && \
   CC=gcc bazel build -c opt \
   --jobs ${BAZEL_N_JOBS} \
@@ -211,9 +213,9 @@ RUN wget https://github.com/tensorflow/tensorflow/archive/refs/tags/v${TENSORFLO
   --define tflite_with_xnnpack=true \
   --define use_xnnpack=true \
   --define with_select_tf_ops=true \
-  --config=opt //tensorflow/lite:libtensorflowlite.so \
-  --config=opt //tensorflow/lite/delegates/flex:delegate \
-  --config=monolithic && \
+  --config=monolithic \
+  //tensorflow/lite:libtensorflowlite.so \
+  //tensorflow/lite/delegates/flex:delegate && \
   cp bazel-bin/tensorflow/lite/libtensorflowlite.so /usr/local/lib/ && \
   mkdir /usr/local/include/tensorflow && \
   cp -RL tensorflow/lite/ /usr/local/include/tensorflow/ && \
