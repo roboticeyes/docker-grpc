@@ -14,7 +14,7 @@
 #   eigen-3
 #   grpc-v1.40.0
 #   opencv-v4.5.3
-#   buf-v0.56.0
+#   buf-v1.19.0
 #   go-v1.17
 #
 ###############################################################################
@@ -23,7 +23,7 @@ ARG TIMEZONE="Europe/Vienna"
 ARG _BASE_IMAGE_NAME="debian"
 ARG _BASE_IMAGE_VERSION="11.0-slim"
 ARG GRPC_VERSION="1.40.0"
-ARG BUF_VERSION="0.56.0"
+ARG BUF_VERSION="1.19.0"
 ARG OPENCV_VERSION="4.5.3"
 ARG GO_VERSION="1.17"
 # Number of processors used for compilation
