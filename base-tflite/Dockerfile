@@ -55,6 +55,7 @@ RUN \
   apt-get update && \
   apt-get -y install \
   build-essential cmake \
+  gdb \
   bash \
   tini \
   wget \
